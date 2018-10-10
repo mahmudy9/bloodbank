@@ -1,0 +1,91 @@
+clients => [
+	name string
+	email string unique
+	password string
+	dob date
+	phone string unique
+	last_donation date
+]
+
+articles
+	[
+		user_id
+		category_id
+		title
+		body
+		image->nullable()
+		cretedat
+		updatedat
+	]
+
+
+categories
+	[
+		id
+		name
+	]
+
+donation_requests
+	[
+		user_id
+		name
+		age
+		blood_type
+		bags
+		hospital
+		hospital_address
+		phone
+		governerate_id
+		city_id
+		details
+	]
+
+notifications
+	[
+		user_id
+		body
+		read
+	]
+
+notifications_settings
+	[
+		setting
+		state
+	]
+
+governerates
+	[
+		id
+		name
+	]
+
+cities
+	[
+		id
+		name
+	]
+
+reports
+	[
+		user_id
+		body
+	]
+
+favorites
+	[
+		user-id
+		article_id
+	]
+
+contacts
+	[
+		user_id
+		subject
+		body
+	]
+
+blood
+	[
+		id
+		type 
+	]
