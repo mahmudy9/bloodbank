@@ -10,4 +10,9 @@ class Blood extends Model
     {
         return $this->belongsToMany('App\Client' , 'blood_user');
     }
+
+    public function client()
+    {
+        return $this->belongsTo('App\Client');
+    }
 }

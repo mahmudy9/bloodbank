@@ -33,4 +33,24 @@ class Client extends Model
     {
         return $this->hasOne('App\City');
     }
+
+    public function blood()
+    {
+        return $this->hasOne('App\Blood');
+    }
+
+    public function contacts()
+    {
+        return $this->hasMany('App\Contacts' , 'user_id');
+    }
+
+    public function reports()
+    {
+        return $this->hasMany('App\Report' , 'user_id');
+    }
+
+    public function notifications()
+    {
+        return $this->hasMany('App\Notification' , 'user_id');
+    }
 }

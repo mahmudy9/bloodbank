@@ -22,4 +22,9 @@ class Governerate extends Model
         return $this->belongsTo('App\Donationreq');
     }
 
+    public function cities()
+    {
+        return $this->hasMany('App\City');
+    }
+
 }

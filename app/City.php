@@ -21,4 +21,9 @@ class City extends Model
         return $this->belongsTo('App\Donationreq');
     }
 
+    public function governerate()
+    {
+        return $this->belongsTo('App\Governerate');
+    }
+
 }
