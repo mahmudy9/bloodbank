@@ -8,7 +8,7 @@ class Donationreq extends Model
 {
     public function client()
     {
-        return $this->belongsTo('App\Client');
+        return $this->belongsTo('App\Client', 'client_id');
     }
 
     public function governerate()

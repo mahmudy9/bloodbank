@@ -21,10 +21,9 @@ class CreateClientsTable extends Migration
             $table->date('dob');
             $table->string('phone')->unique();
             $table->integer('city_id');
-            $table->integer('governerate_id');
             $table->integer('blood_id');
             $table->date('last_donation');
-            $table->string('api_token');
+            $table->string('api_token')->nullable();
             $table->timestamps();
         });
     }

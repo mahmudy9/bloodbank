@@ -18,6 +18,7 @@ class CreateArticlesTable extends Migration
             $table->integer('user_id')->unsigned();
             $table->integer('category_id')->unsigned();
             $table->string('title');
+            $table->text('body');
             $table->string('image')->nullable();
             $table->timestamps();
         });

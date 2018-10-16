@@ -24,11 +24,6 @@ class Client extends Model
         return $this->belongsToMany('App\Blood' , 'blood_user');
     }
 
-    public function governerate()
-    {
-        return $this->hasOne('App\Governerate');
-    }
-
     public function city()
     {
         return $this->hasOne('App\City');
@@ -53,4 +48,11 @@ class Client extends Model
     {
         return $this->hasMany('App\Notification' , 'user_id');
     }
+
+
+    public function donationreqs()
+    {
+        return $this->hasMany('App\Donationreq' , 'client_id');
+    }
+
 }

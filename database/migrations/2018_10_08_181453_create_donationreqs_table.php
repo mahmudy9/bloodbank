@@ -15,6 +15,7 @@ class CreateDonationreqsTable extends Migration
     {
         Schema::create('donationreqs', function (Blueprint $table) {
             $table->increments('id');
+            $table->integer('client_id')->unsigned();
             $table->string('name');
             $table->string('age');
             $table->integer('blood_id');
