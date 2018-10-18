@@ -15,4 +15,9 @@ class Blood extends Model
     {
         return $this->belongsTo('App\Client');
     }
+
+    public function donationreqs()
+    {
+        return $this->hasMany('App\Donationreq');
+    }
 }

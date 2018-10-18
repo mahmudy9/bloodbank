@@ -34,4 +34,13 @@ Route::group(['prefix' => 'v1' , 'namespace' => 'Api' ] , function() {
     Route::get('articles-category/{id}' , 'ClientController@articles_bycategory');
     Route::post('report'  , 'ClientController@report');
     Route::post('contact' , 'ClientController@contact');
+    //Route::get('password/reset', 'Auth\ForgotPasswordController@showLinkRequestForm')->name('password.request');
+
+});
+
+Route::group(['prefix' => 'v1' , 'namespace'=> 'Api' ] , function() {
+    Route::post('password/email', 'AuthController@sendresetpassword');
+    Route::get('password/reset/{token}', 'Auth\ResetPasswordController@showResetForm');
+    Route::post('password/reset', 'Auth\ResetPasswordController@reset');
+
 });

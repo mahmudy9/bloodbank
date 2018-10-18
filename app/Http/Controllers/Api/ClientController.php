@@ -21,43 +21,71 @@ class ClientController extends Controller
 
     public function __construct()
     {
-        $this->middleware('token');
+        //$this->middleware('token');
+        $this->middleware('auth:api');
     }
     
 
     public function profile(Request $request)
     {
-        $token = $request->input('api_token');
-        $client = Client::where('api_token' , $token)->first();
-        return apiResponse(200 , 'success' , $client);
+        //$token = $request->input('api_token');
+        //$client = Client::where('api_token' , $token)->first();
+        return apiResponse(200 , 'success' , $request->user());
     }
 
 
     public function update_profile(Request $request)
     {
         $validator = Validator::make($request->all() , [
-            'name' => 'required|string|min:3|max:190',
-            'email' => 'required|email|unique:clients',
-            'password' => 'required|confirmed',
-            'dob' => 'required|date',
-            'phone' => 'required|numeric|unique:clients',
-            'city_id' => 'required|integer',
-            'blood_id' => 'required|integer',
-            'last_donation' => 'required|date'
+            'name' => 'string|min:3|max:190',
+            'email' => 'email|unique:clients',
+            'password' => 'confirmed',
+            'dob' => 'date',
+            'phone' => 'numeric|unique:clients',
+            'city_id' => 'integer',
+            'blood_id' => 'integer',
+            'last_donation' => 'date'
         ]);
         if($validator->fails())
         {
             return apiResponse(400 , 'Failed to update , some fields are invalid' , $validator->errors());
         }
-        $client = Client::where('api_token' , $token)->first();
-        $client->name = $request->input('name');
-        $client->email = $request->input('email');
-        $client->password = Hash::make($request->input('password'));
-        $client->dob = $request->input('dob');
-        $client->phone = $request->input('phone');
-        $client->city_id = $request->input('city_id');
-        $client->blood_id = $request->input('blood_id');
-        $client->last_donation = $request->input('last_donation');
+        $client = Client::find($request->user()->id);
+        if($request->has('name'))
+        {
+            $client->name = $request->input('name');
+        }
+        if($request->has('email'))
+        {
+            $client->email = $request->input('email');
+        }
+        if($request->has('password'))
+        {
+            $client->password = Hash::make($request->input('password'));
+
+        }
+        if($request->has('dob'))
+        {
+            $client->dob = $request->input('dob');
+        }
+        if($request->has('phone'))
+        {
+            $client->phone = $request->input('phone');
+        }
+        if($request->has('city_id')){
+
+            $client->city_id = $request->input('city_id');
+        }
+        if($request->has('blood_id'))
+        {
+            $client->blood_id = $request->input('blood_id');
+
+        }
+        if($request->has('last_donation'))
+        {
+            $client->last_donation = $request->input('last_donation');
+
+        }
         $client->save();
         return apiResponse(200 , 'updated successfully' , $client);
     }
@@ -195,7 +223,7 @@ class ClientController extends Controller
 
     public function contact(Request $request)
     {
-        $client_id = Client::where('api_token' , $request->input('api_token'))->firstOrFail()->id;
+        $client_id = Client::find($request->user()->id);
 
         $validator = Validator::make($request->all() , [
             'subject' => 'required|min:3',
@@ -217,8 +245,12 @@ class ClientController extends Controller
 
     public function search_articles(Request $request)
     {
-        $articles = Article::where('title' , 'like' , '%'.$request->input('search').'%')->orWhere('body' , 'like' , '%'.$request->input('search').'%')->get();
+        $articles = Article::where('title' , 'like' , '%'.$request->input('search').'%')->
+        orWhere('body' , 'like' , '%'.$request->input('search').'%')->get();
         return apiResponse(200 , 'search results' , $articles);
     }
+
+
+     
 
 }

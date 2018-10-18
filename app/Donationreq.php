@@ -21,4 +21,9 @@ class Donationreq extends Model
         return $this->hasOne('App\City');
     }
 
+    public function blood()
+    {
+        return $this->belongsTo('App\Blood');
+    }
+
 }

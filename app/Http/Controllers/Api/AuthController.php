@@ -7,13 +7,17 @@ use App\Http\Controllers\Controller;
 use App\Client;
 use Validator;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\resetpassword;
 
 class AuthController extends Controller
 {
 
     public function __construct()
     {
-        $this->middleware('token')->except(['register' , 'login']);
+        $this->middleware('token')->except(['register' , 'login' , 'sendresetpassword']);
     }
     
 
@@ -109,6 +113,30 @@ class AuthController extends Controller
         $client->api_token = null;
         $client->save();
         return apiResponse(200 , 'logged out successfully');
+    }
+
+    
+
+    public function sendresetpassword(Request $request)
+    {
+        $validator = Validator::make($request->all() , [
+            'email' => 'required|email'
+        ]);
+        if($validator->fails())
+        {
+            return apiResponse(400 , 'validation error' , $validator->errors());
+        }
+
+        if(!Client::where('email' , $request->input('email'))->exists())
+        {
+            return apiResponse(400 , 'email not valid');
+        }
+        $rand = str_random(60);
+        $passwordreset = DB::table('password_resets')->insert(['email'=> $request->input('email') , 
+            'token' => $rand]);
+
+        Mail::to($request->input('email'))->send(new resetpassword($rand));
+        return apiResponse(200 , 'email sent');
     }
 
 
