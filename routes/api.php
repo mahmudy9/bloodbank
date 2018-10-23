@@ -30,12 +30,13 @@ Route::group(['prefix' => 'v1' , 'namespace' => 'Api' ] , function() {
     Route::get('articles' , 'ClientController@articles');
     Route::get('article/{id}' , 'ClientControlelr@article');
     Route::post('favarticle/{id}' , 'ClientController@fav_article');
+    Route::post('unfavarticle/{id}' , 'ClientController@unfav_article');
     Route::get('categories' , 'ClientController@categories');
     Route::get('articles-category/{id}' , 'ClientController@articles_bycategory');
     Route::post('report'  , 'ClientController@report');
     Route::post('contact' , 'ClientController@contact');
-    //Route::get('password/reset', 'Auth\ForgotPasswordController@showLinkRequestForm')->name('password.request');
-
+    Route::post('store_notification_settings', 'ClientController@store_notification_settings');
+    Route::post('get_notifications' , 'ClientController@get_notifications');
 });
 
 Route::group(['prefix' => 'v1' , 'namespace'=> 'Api' ] , function() {

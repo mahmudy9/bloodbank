@@ -14,6 +14,8 @@ use App\Favorite;
 use App\Category;
 use App\Contact;
 use App\Report;
+use App\Notification;
+use Illuminate\Support\Facades\DB;
 
 class ClientController extends Controller
 {
@@ -129,6 +131,15 @@ class ClientController extends Controller
         $donation->city_id = $request->input('city_id');
         $donation->details = $request->input('details');
         $donation->save();
+        $not = new Notification;
+        $not->user_id = $request->user()->id;
+        $not->body = "Donation request for ". $donation->name . " whose age is ".$donation->age
+        ." and blood type is ".$donation->blood()->type." and needs ".$donation->bags." and hospital
+         is ".$donation->hospital." at ".$donation->hospital_address." at city: ".$donation->city()->name.
+         " governerate: ".$donation->governerate()->name." and Phone number: ".$donation->phone.
+         " and extra details: ".$donation->details;
+         $not->donationreq_id = $donation->id;
+         $not->save();
         return apiResponse(200 , 'donation request saved' , $donation);
     }
 
@@ -168,20 +179,31 @@ class ClientController extends Controller
 
     public function fav_article(Request $request , $id)
     {
-        $token = $request->input('api_token');
-        $client_id = Client::where('api_token' , $token)->first()->id;
+        $client_id = $request->user()->id;
         if(!Article::find($id))
         {
             return apiResponse(404 , 'invalid data');
         }
-        $article_id = Article::find($id)->id;
+        
         $fav = new Favorite;
         $fav->user_id = $client_id;
-        $fav->article_id = $article_id;
+        $fav->article_id = $id;
         $fav->save();
-        $favs = Favorite::where('user_id' , $client_id)->get();
-        return apiResponse(200 , 'article added to favorites' , $favs);
+        return apiResponse(200 , 'article added to favorites');
     }
+
+    public function unfav_article(Request $request , $id)
+    {
+        $client_id = $request->user()->id;
+        if(!Article::find($id))
+        {
+            return apiResponse(404 , 'invalid data');
+        }
+        $fav = Favorite::where('id' , $id)->andWhere('user_id' , $client_id)->first();
+        $fav->delete();
+        return apiResponse(200 , 'article removed from favorites');
+    }
+
 
 
     public function categories()
@@ -250,7 +272,41 @@ class ClientController extends Controller
         return apiResponse(200 , 'search results' , $articles);
     }
 
+    public function store_notification_settings(Request $request)
+    {
+        $validator = Validator::make($request->all() , [
+            'cities' => 'required',
+            'bloods' => 'required'
+        ]);
+        if($validator -> fails())
+        {
+            return apiResponse(400, 'validation error' , $validator->errors());
+        }
+        $client = $request->user();
+        $cities_ids = $request->input('cities');
+        $bloods_ids = $request->input('bloods');
+        $client->cities()->sync($cities_ids);
+        $client->bloods()->sync($bloods_ids);
+        $cities = DB::table('city_user')->where('user_id' , $request->user()->id)->get(['city_id']);
+        $bloods = DB::table('blood_user')->where('user_id' , $request->user()->id)->get(['blood_id']);
+        $donations = Donationreq::whereIn('blood_id' , $bloods)->andWhereIn('city_id' , $cities)
+        ->get(['id']);
+        $nots = Notification::whereIn('donationreq_id', $donations)->get();
+        $request->user()->notifications()->sync($nots); 
+        return apiResponse(200 , 'notification settings stored successfully');    
+    }
 
+    public function get_notifications(Request $request)
+    {
+
+        if(!$request->user()->notifications()->get())
+        {
+            return apiResponse(404 , 'no notifications found for you');
+        }
+        return apiResponse(200, 'notifications' ,$request->user()->notifications()->paginate(20));
+    }
      
+
+
 
 }

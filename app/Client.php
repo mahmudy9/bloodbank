@@ -47,7 +47,7 @@ class Client extends Authenticatable
 
     public function notifications()
     {
-        return $this->hasMany('App\Notification' , 'user_id');
+        return $this->belongsToMany('App\Notification' , 'client_notification');
     }
 
 

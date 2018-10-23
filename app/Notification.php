@@ -6,9 +6,15 @@ use Illuminate\Database\Eloquent\Model;
 
 class Notification extends Model
 {
-    public function client()
+    public function clients()
     {
-        return $this->belongsTo('App\Client' , 'user_id');
+        return $this->belongsToMany('App\Client' , 'client_notification');
+    }
+
+
+    public function donationreq()
+    {
+        return $this->belongsTo('App\Donationreq');
     }
 
 }
