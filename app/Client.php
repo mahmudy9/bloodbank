@@ -4,9 +4,12 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
 
 class Client extends Authenticatable
 {
+
+    use Notifiable;
 
     protected $hidden= ['password' , 'api_token'];
 
@@ -54,6 +57,11 @@ class Client extends Authenticatable
     public function donationreqs()
     {
         return $this->hasMany('App\Donationreq' , 'client_id');
+    }
+
+    public function clientreset()
+    {
+        return $this->hasOne('App\Clientreset');
     }
 
 }

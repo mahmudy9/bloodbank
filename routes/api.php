@@ -37,6 +37,8 @@ Route::group(['prefix' => 'v1' , 'namespace' => 'Api' ] , function() {
     Route::post('contact' , 'ClientController@contact');
     Route::post('store_notification_settings', 'ClientController@store_notification_settings');
     Route::post('get_notifications' , 'ClientController@get_notifications');
+    Route::post('request_reset_password' , 'ClientController@request_reset_password');
+    Route::post('reset_password' , 'ClientController@confirm_pincode_and_reset_password');
 });
 
 Route::group(['prefix' => 'v1' , 'namespace'=> 'Api' ] , function() {

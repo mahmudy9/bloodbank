@@ -16,6 +16,8 @@ use App\Contact;
 use App\Report;
 use App\Notification;
 use Illuminate\Support\Facades\DB;
+use App\Clientreset;
+use Nexmo\Laravel\Facade\Nexmo;
 
 class ClientController extends Controller
 {
@@ -24,7 +26,7 @@ class ClientController extends Controller
     public function __construct()
     {
         //$this->middleware('token');
-        $this->middleware('auth:api');
+        $this->middleware('auth:api')->except(['request_reset_password','confirm_pincode_and_reset_password']);
     }
     
 
@@ -305,8 +307,69 @@ class ClientController extends Controller
         }
         return apiResponse(200, 'notifications' ,$request->user()->notifications()->paginate(20));
     }
-     
 
 
+    public function request_reset_password(Request $request)
+    {
+        $validator = Validator::make($request->all() , [
+            'phone' => 'required'
+        ]);
+        if($validator->fails())
+        {
+            return apiResponse(400 , 'validation error' , $validator->errors());
+        }
+        if(!Client::where('phone' , $request->input('phone'))->exists())
+        {
+            return apiResponse(404 , 'user not found');
+        }
+        $client = Client::where('phone' , $request->input('phone'))->firstOrFail();
+        if(Clientreset::where('client_id' , $client->id)->exists())
+        {
+            $removereset = Clientreset::where('client_id' , $client->id)->firstOrFail();
+            $removereset->delete();
+        }
+        $clientreset = new Clientreset;
+        $clientreset->client_id = $client->id;
+        $clientreset->pincode = str_random(6);
+        if($clientreset->save())
+        {
+            Nexmo::message()->send([
+                'to' => '2'.$client->phone,
+                'from' => 'Verify',
+                'text' => 'Your reset password pin code is '.$clientreset->pincode
+            ]);
+            return apiResponse(200 , 'message sent');
+        }
 
+        return apiResponse(500 , 'server error');
+    }
+
+    public function confirm_pincode_and_reset_password(Request $request)
+    {
+        $validator = Validator::make($request->all() , [
+            'pincode' => 'required',
+            'phone' => 'required',
+            'password' => 'required|confirmed|min:6'
+        ]);
+        if($validator->fails())
+        {
+            return apiResponse(400 , 'validation error' , $validator->errors());
+        }
+        if(!Client::where('phone' , $request->input('phone'))->exists())
+        {
+            return apiResponse(400 , 'invalid phone');
+        }
+        $client = Client::where('phone' , $request->input('phone'))->firstOrFail();
+        $clientreset = Clientreset::where('client_id' , $client->id)->firstOrFail();
+        //$clientreset = $client->clientreset();
+        if($request->input('pincode') != $clientreset->pincode )
+        {
+            return apiResponse(400 , 'invalid pin code');
+        }
+        $client->password = Hash::make($request->input('password'));
+        $client->save();
+        return apiResponse(200 , 'password changed successfully');
+    }
+
+    
 }
