@@ -13,12 +13,12 @@ class Donationreq extends Model
 
     public function governerate()
     {
-        return $this->hasOne('App\Governerate');
+        return $this->belongsTo('App\Governerate');
     }
 
     public function city()
     {
-        return $this->hasOne('App\City');
+        return $this->belongsTo('App\City');
     }
 
     public function blood()

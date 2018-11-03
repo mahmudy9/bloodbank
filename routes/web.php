@@ -18,3 +18,9 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
+Route::get('/admin' , 'AdminController@index');
+Route::get('/admin/cities' , 'AdminController@cities');
+Route::get('/admin/editcity/{cityid}' , 'AdminController@edit_city');
+Route::post('/admin/updatecity' , 'AdminController@update_city');
+Route::get('/admin/deletecity/{cityid}' , 'AdminController@delete_city');
+Route::post('/admin/destroycity' , 'AdminController@destroy_city');

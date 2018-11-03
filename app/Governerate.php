@@ -9,7 +9,7 @@ class Governerate extends Model
 
     public function clients()
     {
-        return $this->belongsToMany('App\Client' , 'governerate_user');
+        return $this->belongsToMany('App\Client' , 'governerate_user' , 'governerate_id' , 'user_id');
     }
 
     public function client()
@@ -19,7 +19,7 @@ class Governerate extends Model
 
     public function donationreq()
     {
-        return $this->belongsTo('App\Donationreq');
+        return $this->hasMany('App\Donationreq');
     }
 
     public function cities()

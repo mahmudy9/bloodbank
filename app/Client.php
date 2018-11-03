@@ -15,17 +15,17 @@ class Client extends Authenticatable
 
     public function cities()
     {
-        return $this->belongsToMany('App\City','city_user');
+        return $this->belongsToMany('App\City','city_user' , 'user_id' , 'city_id');
     }
 
     public function governerates()
     {
-        return $this->belongsToMany('App\Governerate' , 'governerate_user');
+        return $this->belongsToMany('App\Governerate' , 'governerate_user' , 'user_id' , 'governerate_id');
     }
 
     public function bloods()
     {
-        return $this->belongsToMany('App\Blood' , 'blood_user');
+        return $this->belongsToMany('App\Blood' , 'blood_user' , 'user_id' , 'blood_id');
     }
 
     public function city()

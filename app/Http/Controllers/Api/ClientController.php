@@ -28,7 +28,7 @@ class ClientController extends Controller
         //$this->middleware('token');
         $this->middleware('auth:api')->except(['request_reset_password','confirm_pincode_and_reset_password']);
     }
-    
+
 
     public function profile(Request $request)
     {
@@ -110,13 +110,13 @@ class ClientController extends Controller
             'city_id' => 'required|integer',
             'details' => 'required|min:10'
         ]);
-        
+
         if($validator->fails())
         {
             return apiResponse(400 , $validator->errors()->first() , $validator->errors());
         }
 
-        $client = Client::where('api_token' , $token)->firstOrFail();
+        $client = $request->user();
 
         $donation = new Donationreq;
         $donation->client_id = $client->id;
@@ -133,22 +133,25 @@ class ClientController extends Controller
         $donation->city_id = $request->input('city_id');
         $donation->details = $request->input('details');
         $donation->save();
+
         $not = new Notification;
         $not->user_id = $request->user()->id;
         $not->body = "Donation request for ". $donation->name . " whose age is ".$donation->age
-        ." and blood type is ".$donation->blood()->type." and needs ".$donation->bags." and hospital
-         is ".$donation->hospital." at ".$donation->hospital_address." at city: ".$donation->city()->name.
-         " governerate: ".$donation->governerate()->name." and Phone number: ".$donation->phone.
+        ." and blood type is ".$donation->blood->type." and needs ".$donation->bags." and hospital
+         is ".$donation->hospital." at ".$donation->hospital_address." at city: ".$donation->city->name.
+         " governerate: ".$donation->governerate->name." and Phone number: ".$donation->phone.
          " and extra details: ".$donation->details;
          $not->donationreq_id = $donation->id;
+         $not->read = 1;
          $not->save();
+
         return apiResponse(200 , 'donation request saved' , $donation);
     }
 
-    
+
     public function donation_request($id)
     {
-       
+
 
         $donation = Donationreq::find($id);
 
@@ -159,7 +162,7 @@ class ClientController extends Controller
 
     public function donations()
     {
-        
+
         $donations = Donationreq::paginate(10);
 
         return apiResponse(200 , 'donations data' , DonationResource::collection($donations));
@@ -168,7 +171,7 @@ class ClientController extends Controller
 
     public function articles()
     {
-        
+
         $articles = Article::paginate(10);
         return apiResponse(200 , 'Articles data' , $articles);
     }
@@ -186,7 +189,7 @@ class ClientController extends Controller
         {
             return apiResponse(404 , 'invalid data');
         }
-        
+
         $fav = new Favorite;
         $fav->user_id = $client_id;
         $fav->article_id = $id;
@@ -220,7 +223,7 @@ class ClientController extends Controller
         {
             return apiResponse(404 , 'Category not found');
         }
-        
+
         $articles = Article::where('category_id' , $id)->paginate(10);
 
         return apiResponse(200 , 'articles by category' , $articles);
@@ -237,7 +240,7 @@ class ClientController extends Controller
         {
             return apiResponse(400 , 'Validation error' , $validator->errors());
         }
-        
+
         $report = new Report;
         $report->user_id = $client_id;
         $report->body = $request->input('body');
@@ -289,13 +292,14 @@ class ClientController extends Controller
         $bloods_ids = $request->input('bloods');
         $client->cities()->sync($cities_ids);
         $client->bloods()->sync($bloods_ids);
-        $cities = DB::table('city_user')->where('user_id' , $request->user()->id)->get(['city_id']);
-        $bloods = DB::table('blood_user')->where('user_id' , $request->user()->id)->get(['blood_id']);
-        $donations = Donationreq::whereIn('blood_id' , $bloods)->andWhereIn('city_id' , $cities)
-        ->get(['id']);
-        $nots = Notification::whereIn('donationreq_id', $donations)->get();
-        $request->user()->notifications()->sync($nots); 
-        return apiResponse(200 , 'notification settings stored successfully');    
+        $cities = $request->user()->cities()->pluck('city_id')->toArray();
+
+        $bloods = $request->user()->bloods()->pluck('blood_id')->toArray();
+        $donations = Donationreq::whereIn('blood_id' , $bloods)->WhereIn('city_id' , $cities)->pluck('id')->toArray();
+
+        $nots = Notification::whereIn('donationreq_id', $donations)->pluck('id')->toArray();
+        $request->user()->notifications()->sync($nots);
+        return apiResponse(200 , 'notification settings stored successfully');
     }
 
     public function get_notifications(Request $request)
@@ -371,5 +375,5 @@ class ClientController extends Controller
         return apiResponse(200 , 'password changed successfully');
     }
 
-    
+
 }
