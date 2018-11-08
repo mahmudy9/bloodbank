@@ -11,12 +11,12 @@ class City extends Model
         return $this->belongsToMany('App\Client' , 'city_user' , 'city_id' , 'user_id');
     }
 
-    public function client()
+    public function clientss()
     {
-        return $this->belongsTo('App\Client');
+        return $this->hasMany('App\Client');
     }
 
-    public function donationreq()
+    public function donationreqs()
     {
         return $this->hasMany('App\Donationreq');
     }

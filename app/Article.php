@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Carbon\Carbon;
 
 class Article extends Model
 {
@@ -15,4 +16,15 @@ class Article extends Model
     {
         return $this->belongsTo('App\User');
     }
+
+    public function getBodyAttribute($value)
+    {
+        return clean($value);
+    }
+
+    public function getCreatedAtAttribute($value)
+    {
+        return Carbon::parse($value)->diffForHumans();
+    }
+
 }

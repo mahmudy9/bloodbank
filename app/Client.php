@@ -30,12 +30,12 @@ class Client extends Authenticatable
 
     public function city()
     {
-        return $this->hasOne('App\City');
+        return $this->belongsTo('App\City');
     }
 
     public function blood()
     {
-        return $this->hasOne('App\Blood');
+        return $this->belongsTo('App\Blood');
     }
 
     public function contacts()

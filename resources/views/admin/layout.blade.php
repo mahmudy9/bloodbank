@@ -37,6 +37,14 @@
 
   <!-- Google Font -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
+
+  <script src="{{asset('tinymce/tinymce.min.js')}}" ></script>
+    <script>
+        tinymce.init({
+            selector : '#area'
+        });
+    </script>
+
 </head>
 <body class="hold-transition skin-blue sidebar-mini">
 <div class="wrapper">
@@ -65,45 +73,25 @@
           <!-- Tasks: style can be found in dropdown.less -->
 
           <!-- User Account: style can be found in dropdown.less -->
-          <li class="dropdown user user-menu">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-              <img src="dist/img/user2-160x160.jpg" class="user-image" alt="User Image">
-              <span class="hidden-xs">Alexander Pierce</span>
-            </a>
-            <ul class="dropdown-menu">
-              <!-- User image -->
-              <li class="user-header">
-                <img src="dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
 
-                <p>
-                  Alexander Pierce - Web Developer
-                  <small>Member since Nov. 2012</small>
-                </p>
-              </li>
-              <!-- Menu Body -->
-              <li class="user-body">
-                <div class="row">
-                  <div class="col-xs-4 text-center">
-                    <a href="#">Followers</a>
-                  </div>
-                  <div class="col-xs-4 text-center">
-                    <a href="#">Sales</a>
-                  </div>
-                  <div class="col-xs-4 text-center">
-                    <a href="#">Friends</a>
-                  </div>
-                </div>
                 <!-- /.row -->
-              </li>
-              <!-- Menu Footer-->
-              <li class="user-footer">
-                <div class="pull-left">
-                  <a href="#" class="btn btn-default btn-flat">Profile</a>
-                </div>
-                <div class="pull-right">
-                  <a href="#" class="btn btn-default btn-flat">Sign out</a>
-                </div>
-              </li>
+                <li class="nav-item dropdown">
+                    <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
+                        {{ Auth::user()->name }} <span class="caret"></span>
+                    </a>
+
+                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="{{ route('logout') }}"
+                           onclick="event.preventDefault();
+                                         document.getElementById('logout-form').submit();">
+                            {{ __('Logout') }}
+                        </a>
+
+                        <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                            @csrf
+                        </form>
+                    </div>
+                </li>
             </ul>
           </li>
 
@@ -139,18 +127,95 @@
       <!-- sidebar menu: : style can be found in sidebar.less -->
       <ul class="sidebar-menu" data-widget="tree">
         <li class="header">MAIN NAVIGATION</li>
-        <li>
+        <li @if(Request::url() == url('/admin'))
+            class="active"
+            @endif
+                >
           <a href="{{url('/admin')}}">
             Dashboard
           </a>
       </li>
-      <li>
+      <li @if(Request::url() == url('/admin/cities'))
+          class="active"
+          @endif
+          >
 
           <a href="{{url('/admin/cities')}}">
               Cities
           </a>
       </li>
+      <li @if(Request::url() == url('/admin/governerates'))
+          class="active"
+          @endif
+      >
 
+          <a href="{{url('/admin/governerates')}}">
+              Governerates
+          </a>
+      </li>
+      <li @if(Request::url() == url('/admin/bloods'))
+          class="active"
+          @endif
+      >
+
+          <a href="{{url('/admin/bloods')}}">
+              Blood Types
+          </a>
+      </li>
+      <li @if(Request::url() == url('/admin/donations'))
+          class="active"
+          @endif
+      >
+
+          <a href="{{url('/admin/donations')}}">
+              Donation Requests
+          </a>
+      </li>
+      <li @if(Request::url() == url('/admin/articles'))
+          class="active"
+          @endif
+      >
+
+          <a href="{{url('/admin/articles')}}">
+              Articles
+          </a>
+      </li>
+      <li @if(Request::url() == url('/admin/categories'))
+          class="active"
+          @endif
+      >
+
+          <a href="{{url('/admin/categories')}}">
+              Categories
+          </a>
+      </li>
+      <li @if(Request::url() == url('/admin/clients'))
+          class="active"
+          @endif
+      >
+
+          <a href="{{url('/admin/clients')}}">
+              Clients
+          </a>
+      </li>
+      <li @if(Request::url() == url('/admin/contacts'))
+          class="active"
+          @endif
+      >
+
+          <a href="{{url('/admin/contacts')}}">
+              Contacts
+          </a>
+      </li>
+      <li @if(Request::url() == url('/admin/reports'))
+          class="active"
+          @endif
+      >
+
+          <a href="{{url('/admin/reports')}}">
+              Reports
+          </a>
+      </li>
 
       </ul>
     </section>

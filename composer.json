@@ -9,6 +9,7 @@
         "fideloper/proxy": "^4.0",
         "laravel/framework": "5.7.*",
         "laravel/tinker": "^1.0",
+        "mews/purifier": "^2.1",
         "nexmo/client": "^1.5",
         "nexmo/laravel": "^1.1",
         "zizaco/entrust": "5.2.x-dev"

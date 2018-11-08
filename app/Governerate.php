@@ -12,12 +12,7 @@ class Governerate extends Model
         return $this->belongsToMany('App\Client' , 'governerate_user' , 'governerate_id' , 'user_id');
     }
 
-    public function client()
-    {
-        return $this->belongsTo('App\Client');
-    }
-
-    public function donationreq()
+    public function donationreqs()
     {
         return $this->hasMany('App\Donationreq');
     }

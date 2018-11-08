@@ -11,9 +11,9 @@ class Blood extends Model
         return $this->belongsToMany('App\Client' , 'blood_user' , 'blood_id' , 'user_id');
     }
 
-    public function client()
+    public function clientss()
     {
-        return $this->belongsTo('App\Client');
+        return $this->hasMany('App\Client');
     }
 
     public function donationreqs()
